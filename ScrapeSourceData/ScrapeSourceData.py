@@ -7,19 +7,19 @@ from selenium.webdriver.common.keys import Keys
 import time
 
 
-source = "1ES 0033+595"  # Source name for which other catalog names should be found
+source = "4C+13.14"  # Source name for which other catalog names should be found
 driver = webdriver.Chrome() # Used Google Chrome WEB browser
 driver.get("https://openuniverse.asi.it/open_universe.html") # This page is used for scraping
 driver.maximize_window()
 element = driver.find_element_by_id('stringa_inserita_su_homepage') #Firstly need to fill input tag of a web page with source name
 element.send_keys(source)    # Tag ID of an input tag is "stringa_inserita_su_homepage "
-time.sleep(10)    # Need a delay maybe connection is not good
+time.sleep(7)    # Need a delay maybe connection is not good
 
 found_source = driver.find_element_by_id('page').click() # If source name is found click on a main page to see more about source
 time.sleep(5) # Wait 5 seconds
 
 try:
-    time.sleep(20) # Again wait 20 second the whole page should be loaded
+    time.sleep(7) # Again wait 20 second the whole page should be loaded
     titles = driver.find_element(By.XPATH, '/html/body/div[1]/div/div[8]/table/tbody/tr/td[1]/div[1]/div[2]/a/span') #Find a span tag which contains other catalogs names
     html = titles.get_attribute('innerHTML') # Get inner text of tha span tag
     names = html.split("<br>") # Make a list using split function. <br> tag was used for new line in HTML
@@ -27,43 +27,35 @@ try:
     #print(names)
 finally:
     driver.quit() # Anyway close the browser
-
-# Used Google Chrome WEB browser
-
-#names =['PKSB2230+114', 'BZQJ2232+1143', 'PKS2230+114', 'WMAP47', '5BZQJ2232+1143', 'GB6B2230+1128', 'PLCKERC143G077.43-38.58', 'WMAP5J1254+1142', 'GB6J2232+1143', 'PLCKERC070G077.43-38.58', '1RXSJ223236.8+114331', '2FGLJ2232.4+1143', '1Jy2230+114', 'PCCS1030G077.44-38.58', '2E2230.1+1128', 'PLCKERC217G077.44-38.57', 'PCCS1044G077.44-38.59', '1FGL_J2232.5+1144', 'CTA102', 'PLCKERC353G077.43-38.58', 'PLCKERC044G077.43-38.58']
 #names =[ 'BZQJ2232+1143', 'PKS2230+114', 'WMAP47']
 
-#for i in names:
-#    matched_elements = browser.get("https://www.google.com/search?q=" + i)
-
-
 browser = webdriver.Chrome()
-browser.get('http://www.google.com')
-browser.maximize_window()
-valid_link=[]
+browser.get('http://www.google.com') # Search using all names in google.com
+browser.maximize_window() #maximize chrome window after opening
+clear_links=[] # gather all links in this list connected with source name
 for name in names:
-    search = browser.find_element_by_name('q')
-    search.send_keys(name)
-    search.send_keys(Keys.RETURN) # hit return after you enter search text
+    search = browser.find_element_by_name('q') # find search box
+    search.send_keys(name) # fill search box with a source name
+    search.send_keys(Keys.RETURN) # hit return after you entering source name
     time.sleep(5) # sleep for 5 seconds so you can see the results
-    search_result = browser.find_elements_by_class_name("yuRUbf")
+    search_result = browser.find_elements_by_class_name("yuRUbf") #Each result has a class with name yuRUbf
     links = []
     for i in search_result:
-        child = i.find_elements_by_tag_name("a")
+        child = i.find_elements_by_tag_name("a") # separate <a> tags which contains searching result links
         for j in child:
-            links.append(j.get_attribute('href'))
-    browser.find_element_by_name('q').clear()
+            links.append(j.get_attribute('href')) #from <a> tag get only href
+    browser.find_element_by_name('q').clear() # after filling search box and finding results clear searched name
     time.sleep(2)
-    valid_links=[k for k in links if  "https://translate.google.com/" not in k]
+    valid_links=[k for k in links if  "https://translate.google.com/" not in k] # links list contain other links which need to be removed
     for link in valid_links:
-        valid_link.append(link)
-browser.quit()
-open_links = webdriver.Chrome()
+        clear_links.append(link)
+browser.quit() # after getting all results close the browser
+open_links = webdriver.Chrome() # then need to open browser again to open gathered links
 open_links.maximize_window()
-for info_link in range(len(valid_link)):
-    open_links.get(valid_link[info_link])
-    if (info_link != len(valid_link) - 1):
-        open_links.execute_script("window.open('');")
+for info_link in range(len(clear_links)):
+    open_links.get(clear_links[info_link])
+    if (info_link != len(clear_links) - 1):
+        open_links.execute_script("window.open('');") # open tab for each new link from clear_links
         chwd = open_links.window_handles
         open_links.switch_to.window(chwd[-1])
     time.sleep(3)
