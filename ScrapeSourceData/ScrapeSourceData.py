@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 
 
-source = "PKS 0420+022"  # Source name for which other catalog names should be found
+source = "PKS 0205-010"  # Source name for which other catalog names should be found
 driver = webdriver.Chrome() # Used Google Chrome WEB browser
 driver.get("https://openuniverse.asi.it/open_universe.html") # This page is used for scraping
 driver.maximize_window()

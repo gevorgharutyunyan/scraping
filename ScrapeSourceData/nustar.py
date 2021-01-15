@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
+import pandas as pd
 
 
 def find_nustar_obs(source):
@@ -16,7 +17,6 @@ def find_nustar_obs(source):
     element.send_keys(Keys.RETURN)
     driver.switch_to.window(driver.window_handles[1])
     if driver.current_url =="https://www.ssdc.asi.it/cgi-bin/catalogs":
-
         try:
             driver.find_element_by_tag_name('img')
         except:
@@ -27,7 +27,11 @@ def find_nustar_obs(source):
         return True
     driver.quit()
 
+search_names =pd.read_csv("for_check.csv")
+obs = search_names.Assoc_name.to_frame()
+obs["RA,Dec"] = (search_names.RA.astype(str) + ',' + search_names.DEC.astype(str))
 
+#print(type(obs))
 source_names = ['3C6.1', '3C9', '3C15', '3C17', 'NGC315', '3C31', '0106+013', '3C33', '3C47', '4C+35.03',
                 'PKS0208-512', '3C66B', '0234+285', '0313-192', '3C83.1', 'PKS0405-12', '3C109', 'PKS0413-21',
                 '3C111', '3C120', '3C123', '3C129', '0454-463', 'PictorA', 'PKS0521-36', '0529+075', 'PKS0605-08',
@@ -43,7 +47,9 @@ source_names = ['3C6.1', '3C9', '3C15', '3C17', 'NGC315', '3C31', '0106+013', '3
                 '2155-152', '2201+315', 'PKS2201+044', '2209+080', '2216-038', '3C445', '3C452', '3C454.3',
                 '2255-282', 'PKSJ2310-437', '3C465', '2345-167']
 
+obs_list = list(map(find_nustar_obs,obs["RA,Dec"]))
+obs["Observation"] = obs_list
+obs.to_csv("nustar_obs.csv",index=False)
+print(obs)
+#print(obs_list)
 
-obs_list = list(map(find_nustar_obs,source_names))
-
-print(obs_list)
