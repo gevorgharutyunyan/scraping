@@ -1,6 +1,5 @@
 import math
 import pandas as pd
-import os
 import glob
 
 def date_to_jd(year, month, day):
@@ -82,20 +81,20 @@ def jd_to_mjd(year, month, day):
     """
     return date_to_jd(year, month, day) - 2400000.5
 
-path = 'D:/PythonProjects/scraping/ScrapeSourceData/High_redshift'
+path = 'D:\PyCharm\scraping\ScrapeSourceData\High_redshift' # Paste here path of the folder which contains folders of sources
 dat_paths = []
-for filename in glob.glob(path+"/*/*.dat"):
+for filename in glob.glob(path+"/*/*.dat"): # Get all folders and append to dat_paths
     dat_paths.append(filename)
 
 for abs_path in dat_paths:
-    data = pd.read_csv(abs_path, sep='|', header=None, skiprows=1,
-                       low_memory = False, skipinitialspace=True,)
-    del data[0]
-    data.columns =["obsid","start_time","uvot_expo_uu","uvot_expo_bb","uvot_expo_vv","uvot_expo_w1","uvot_expo_w2","uvot_expo_m2","xrt_expo_wt","xrt_expo_pc","_Search_Offset"]
-    splited_mjd= [data["start_time"][i].split(" ")[0].split("-") for i in range(len(data["start_time"]))]
-    mjd_col = [jd_to_mjd(int(splited_mjd[k][0]),int(splited_mjd[k][1]), int(splited_mjd[k][2])) for k in range(len(splited_mjd))]
-    data["MJD"] = mjd_col
-    print(data)
-    #data.to_csv(abs_path)
+    data = pd.read_csv(abs_path, sep='|', header=None, skiprows=1,skipinitialspace=True) # Read each *.dat file
+    del data[0],data[12] # data[0] and data[12] contains Nans which should be deleted
+    data.columns =["obsid","start_time","uvot_expo_uu","uvot_expo_bb","uvot_expo_vv","uvot_expo_w1","uvot_expo_w2",
+                   "uvot_expo_m2","xrt_expo_wt","xrt_expo_pc","_Search_Offset"] # Add columns to a data frame
+    splited_mjd= [data["start_time"][i].split(" ")[0].split("-") for i in range(len(data["start_time"]))] # need to separate year,month and day from ["start_time"] clumn
+    mjd_col = [jd_to_mjd(int(splited_mjd[k][0]),int(splited_mjd[k][1]), int(splited_mjd[k][2])) for k in range(len(splited_mjd))] # splited_mjd list contains separated strings
+    data.to_csv(abs_path.replace('.dat',".csv"),index=False)
+
+
 
 
