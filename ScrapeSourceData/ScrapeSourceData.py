@@ -7,20 +7,20 @@ from selenium.webdriver.common.keys import Keys
 import time
 
 
-source = "PKS 0205-010"  # Source name for which other catalog names should be found
+source = "4C +01.02"  # Source name for which other catalog names should be found
 driver = webdriver.Chrome() # Used Google Chrome WEB browser
 driver.get("https://openuniverse.asi.it/open_universe.html") # This page is used for scraping
 driver.maximize_window()
 element = driver.find_element_by_id('stringa_inserita_su_homepage') #Firstly need to fill input tag of a web page with source name
 element.send_keys(source)    # Tag ID of an input tag is "stringa_inserita_su_homepage "
-time.sleep(10)    # Need a delay maybe connection is not good
+time.sleep(2)    # Need a delay maybe connection is not good
 
 #found_source = driver.find_element_by_id('page').click() # If source name is found click on a main page to see more about source
 found_source=element.send_keys(Keys.RETURN)
-time.sleep(5) # Wait 5 seconds
+time.sleep(1) # Wait 5 seconds
 
 try:
-    time.sleep(7) # Again wait 20 second the whole page should be loaded
+    time.sleep(2) # Again wait 20 second the whole page should be loaded
     titles = driver.find_element(By.XPATH, '/html/body/div[1]/div/div[8]/table/tbody/tr/td[1]/div[1]/div[2]/a/span') #Find a span tag which contains other catalogs names
     html = titles.get_attribute('innerHTML') # Get inner text of tha span tag
     names = html.split("<br>") # Make a list using split function. <br> tag was used for new line in HTML
@@ -40,7 +40,7 @@ if names:
        search = browser.find_element_by_name('q') # find search box
        search.send_keys(name) # fill search box with a source name
        search.send_keys(Keys.RETURN) # hit return after you entering source name
-       time.sleep(5) # sleep for 5 seconds so you can see the results
+       time.sleep(2) # sleep for 5 seconds so you can see the results
        search_result = browser.find_elements_by_class_name("yuRUbf") #Each result has a class with name yuRUbf
        links = []
        for i in search_result:
@@ -63,6 +63,6 @@ if clear_links:
             open_links.execute_script("window.open('');") # open a new tab for each new link from clear_links
             chwd = open_links.window_handles
             open_links.switch_to.window(chwd[-1])
-        time.sleep(3)
+        time.sleep(2)
 
 

@@ -49,7 +49,7 @@ source_names = ['3C6.1', '3C9', '3C15', '3C17', 'NGC315', '3C31', '0106+013', '3
 
 obs_list = list(map(find_nustar_obs,obs["RA,Dec"]))
 obs["Observation"] = obs_list
-obs.to_csv("nustar_obs.csv",index=False)
+obs.to_csv("high_redshift_nustar_obs.csv",index=False)
 print(obs)
 #print(obs_list)
 
